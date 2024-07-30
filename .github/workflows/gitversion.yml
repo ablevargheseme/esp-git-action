@@ -1,9 +1,7 @@
 name: CI/CD Workflow
 
 on:
-  pull_request_target:
-    types:
-      - "opened"
+  push:
     branches:
       - develop
 
@@ -37,7 +35,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "MAJOR"
           minor_pattern: "MINOR"
-          format: "${major}.${minor}.${patch}"
+          format: "${major}.${minor}.${ patch}"
           namespace: develop
           change_path: "."
           short_tags: false
