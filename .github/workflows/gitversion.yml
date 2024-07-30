@@ -1,3 +1,5 @@
+name: CI/CD Workflow
+
 on:
   pull_request_target:
     types:
@@ -6,7 +8,7 @@ on:
       - develop
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
 
 jobs:
   comment_pull_request:
@@ -14,11 +16,20 @@ jobs:
     permissions:
       # Needed to write comments in the pull request
       pull-requests: write
+      contents: write # Needed to push tags
+
     steps:
       - uses: actions/checkout@v3
         with:
           ref: develop
           fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/${{ github.repository }}
+
       - name: Bump version
         uses: PaulHatch/semantic-version@v4.0.2
         id: tag_version_develop
@@ -31,6 +42,7 @@ jobs:
           change_path: "."
           short_tags: false
           bump_each_commit: true
+
       - name: Tag Release (vX.Y.Z)
         run: |
           git tag ${{ steps.tag_version_develop.outputs.version_tag }}
