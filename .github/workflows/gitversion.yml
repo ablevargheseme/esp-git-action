@@ -18,12 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          # Really important to get the good commit
-          ref: "refs/pull/${{ github.event.number }}/merge"
           fetch-depth: 0
 
       - name: Perform semantic version
-        uses: paulhatch/semantic-version@v5.0.3
+        uses: paulhatch/semantic-version@v5.4.0
         id: semantic_version
         with:
           tag_prefix: "v"
